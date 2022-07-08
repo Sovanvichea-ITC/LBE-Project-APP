@@ -1,6 +1,7 @@
 <script>
 import FileSaver from "file-saver";
 import { Document, Packer, Paragraph, TextRun } from "docx";
+import React from "react";
 
 export default {
   data() {
@@ -8,14 +9,15 @@ export default {
       titleSearch: "null",
       message: "",
       data: [],
+      textValue: [],
+      textValueDescription: [],
       valueSearch_word: "",
+      textDescription: [],
+      txt: "",
     };
   },
   methods: {
     async getData() {
-      // console.log("ref", this.$refs.input.value);
-      //const valueSearch = this.$refs.input.value;
-
       var url = "https://km.wikipedia.org/w/api.php";
 
       var params = {
@@ -35,50 +37,30 @@ export default {
       this.data = await res.json();
       console.log(this.data);
       console.log("\n\n");
-      // console.log("result ", data.search[0].description);
-      // console.log("result ", data.search[0]);
 
       console.log("result ", this.data.query.search[0].title);
       console.log("result ", this.data.query.search[0].snippet);
-      // .then(function (response) {
-      //   return response.json();
-      // })
-      // .then(function (response) {
-      //   console.log("response1: ", response.query.search[0].title);
-      //   console.log("response: ", response.query.search[0].snippet);
-      //   //console.log("response1: ", response.query.search);
-      //   console.log("response2: ", response.query);
-      //   //this.titleSearch = response.query.search[0].title;
-      //   console.log("titleSearch", response.query.search[0].title);
-      //   document.getElementById("title").innerHTML = response.query.search[0].title;
-      //   document.getElementById("subtitle").innerHTML =
-      //     response.query.search[0].snippet;
-      //   //msg = response.query.search[0].snippet;
 
-      // })
-      // .catch(function (error) {
-      //   console.log(error);
-      // });
-
-      document.getElementById("title").innerHTML = this.data.query.search[0].title;
-      for (let i = 0; i < this.data.query.search.length; i++) {
+      // document.getElementById("title").innerHTML = this.data.query.search[0].title;
+      //this.textValue = this.data.query.search[0].snippet;
+      //console.log("textValue: ",this.textValue.replace(/<[^>]+>/g, ''))
+      for (let i = 0; i < this.data.query?.search?.length; i++) {
         //document.getElementById("subtitle").innerHTML = this.data.query.search[i].snippet;
-        document.getElementById(
-          "title"
-        ).innerHTML += `<li><a href="#"> ${this.data.query.search[i].title}</a> ${this.data.query.search[i].snippet}
-        </li>`;
         // document.getElementById(
-        //   "subtitle_1"
-        // ).innerHTML += `<li><a href="#"> ${this.data.query.search[i].snippet}</a></li>`;
-        // console.log(i, " :", this.data.query.search[i].snippet);
+        //   "title"
+        // ).innerHTML += `<li><a href="#"> ${this.data.query.search[i].title}</a> ${this.data.query.search[i].snippet}
+        // </li>`;
+        this.textValue[i] = this.data.query.search[i].title;
+        this.textValueDescription[i] = this.data.query.search[i].snippet.replace(
+          /<[^>]+>/g,
+          ""
+        );
+
+        this.textDescription[i] = this.textValue[i].concat(" ", this.textValueDescription[i]);
+        console.log("123213213",this.textDescription[i])
+        this.txt = this.txt.concat("\n", this.textDescription[i]).concat("\n។​", " ");
       }
-      //document.getElementById("subtitle").innerHTML = this.data.query.search[0].snippet;
-
-      //this.message = this.data.query.search[0].snippet;
-      //this.titleSearch = data.query.search[0].title;
-      // this.message = data.query.search[0].snippet;
-
-      /// console.log("1234", this.message.replace("X", "233"));
+      console.log(this.txt);
     },
     exportDocx() {
       // Create a new Document an save it in a variable
@@ -89,14 +71,12 @@ export default {
             children: [
               new Paragraph({
                 children: [
-                  new TextRun("Hello World"),
+
                   new TextRun({
-                    text: "Foo Bar",
-                    bold: true,
-                  }),
-                  new TextRun({
-                    text: this.message,
-                    bold: true,
+                    text: this.txt,
+                    size: 25,
+                    font:'Khmer OS Siemreap'
+                    
                   }),
                 ],
               }),
@@ -106,11 +86,19 @@ export default {
       });
       const mimeType =
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-      const fileName = "test.docx";
+      const fileName = `${this.valueSearch_word}.docx`;
       Packer.toBlob(doc).then((blob) => {
+        console.log('tag', blob)
         const docblob = blob.slice(0, blob.size, mimeType);
         FileSaver.saveAs(docblob, fileName);
       });
+
+      //Notification
+      this.$Notification.success({
+        title: "Success notification",
+        text: "Download completed",
+      });
+      this.txt = ""
     },
   },
 };
@@ -123,7 +111,7 @@ export default {
   </div>
 
   <main>
-    <div class="" style="display:flex;">
+    <div class="" style="display: flex; ">
       <it-input
         status="success"
         message=""
@@ -147,8 +135,28 @@ export default {
 
     <div>
       <h1><div id="title" ref="title_search"></div></h1>
-      <!-- <div><p dangerouslySetInnerHTML="{{__html:this.message}}"></p></div> -->
+      <!-- <p :v-html=data.query.search[0].snippet>s</p> -->
+      <!-- <span v-html="p"></span> -->
     </div>
     <!-- <div id="subtitle_1" ref="subtitle_search"></div> -->
+
+    <div class="txt" v-for="t in textDescription">
+      <!-- <p :v-html=data.query.search[0].snippet>s</p> -->
+      <!-- <span dangerouslySetInnerHTML={{__html:d.snippet}}>s</span>
+      <div dangerouslySetInnerHTML="{{__html:d.snippet}}"></div>
+      <div dangerouslySetInnerHTML={{__html: data}}></div> -->
+
+      <div class="text"><span href="#"> {{ t }}</span></div>
+      <!-- <li v-if="t == t" v-for="text in textValueDescription">{{ text }}</li> -->
+    </div>
   </main>
 </template>
+<style>
+.txt{
+  background-color: aliceblue;
+  padding: 29px;
+  margin-top: 20px;
+  border-radius: 10px;
+}
+
+</style>
