@@ -40,38 +40,15 @@ export default {
         url += "&" + key + "=" + params[key];
       });
 
-      // showlink
-
-      // const urlLink =
-      //   "https://km.wikipedia.org/w/index.php?origin=*&action=opensearch&search=" +
-      //   this.valueSearch_word;
-
       var msg;
       const res = await fetch(url);
       this.data = await res.json();
-      //console.log(this.data.query.search);
-      //console.log("\n\n");
-
-     // console.log("result ", this.data.query.search[0].title);
-      //console.log("result ", this.data.query.search[0].snippet);
 
       const urlLink =
         "https://km.wikipedia.org/w/index.php?origin=*&action=opensearch&search=" +
         this.data.query.search[0].title;
-      //console.log("Url", urlLink);
-      //const dataLink = await fetch(urlLink);
 
-      //console.log("ព្រះ", await dataLink.json());
-
-      // document.getElementById("title").innerHTML = this.data.query.search[0].title;
-      //this.textValue = this.data.query.search[0].snippet;
-      //console.log("textValue: ",this.textValue.replace(/<[^>]+>/g, ''))
       for (let i = 0; i < this.data.query?.search?.length; i++) {
-        //document.getElementById("subtitle").innerHTML = this.data.query.search[i].snippet;
-        // document.getElementById(
-        //   "title"
-        // ).innerHTML += `<li><a href="#"> ${this.data.query.search[i].title}</a> ${this.data.query.search[i].snippet}
-        // </li>`;
         this.textValue[i] = this.data.query.search[i].title;
         this.textValueDescription[i] = this.data.query.search[i].snippet.replace(
           /<[^>]+>/g,
@@ -87,18 +64,44 @@ export default {
           " ",
           this.textValueDescription[i]
         );
-        //console.log("123213213", this.textDescription[i]);
+
         this.txt = this.txt.concat("\n", this.textDescription[i]).concat("\n។​", " ");
 
         this.urlLink[i] =
           "https://km.wikipedia.org/w/index.php?origin=*&action=opensearch&search=" +
           this.data.query.search[i].title;
-       // console.log("Url", this.urlLink[i]);
       }
-     // console.log(this.txt);
     },
     exportDocx() {
       // Create a new Document an save it in a variable
+      //this.createPargraps(textValue);
+
+      let docChildren = [];
+      for (let i = 0; i < this.data.query?.search?.length; i++) {
+        docChildren.push(
+          new Paragraph({
+            text: this.textValue[i],
+            heading: HeadingLevel.HEADING_1,
+            pageBreakBefore: true,
+          })
+        );
+
+        docChildren.push(
+          new Paragraph({
+            children: [
+              new TextRun({
+                // text: this.txt,
+                text: this.textValueDescription[i],
+                size: 25,
+                font: "Khmer OS Siemreap",
+              }),
+            ],
+          })
+        );
+      }
+
+      console.log(...docChildren);
+
       const doc = new Document({
         sections: [
           {
@@ -109,33 +112,16 @@ export default {
                 hyperlink: true,
                 headingStyleRange: "1-5",
               }),
-
-              new Paragraph({
-                text: "data.query.search[index].title",
-                heading: HeadingLevel.HEADING_1,
-                pageBreakBefore: true,
-              }),
-
-              new Paragraph({
-                children: [
-                  new TextRun({
-                    text: this.txt,
-                    size: 25,
-                    font: "Khmer OS Siemreap",
-                  }),
-                ],
-              }),
+              ...docChildren,
             ],
           },
         ],
       });
 
-      //console.log("doc:   ",doc);
       const mimeType =
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
       const fileName = `${this.valueSearch_word}.docx`;
       Packer.toBlob(doc).then((blob) => {
-       // console.log("tag", blob);
         const docblob = blob.slice(0, blob.size, mimeType);
         FileSaver.saveAs(docblob, fileName);
       });
@@ -147,6 +133,10 @@ export default {
       });
       this.txt = "";
     },
+
+    // createPargraps(title:[]){
+    //   console.log('tag', title.length)
+    // }
   },
 };
 </script>
@@ -159,7 +149,8 @@ export default {
 
   <main>
     <div class="" style="display: flex">
-      <it-input @keyup.enter="getData"
+      <it-input
+        @keyup.enter="getData"
         status="success"
         message=""
         prefix="Word"
@@ -197,7 +188,9 @@ export default {
       <div class="text">
         <span href="#"> {{ t }}</span>
       </div>
-      <a :href="urlLink[index]"><it-button type="warning">See More</it-button></a>
+      <div>
+        <a :href="urlLink[index]"><it-button type="warning">See More</it-button></a>
+      </div>
       <!-- <li v-if="t == t" v-for="text in textValueDescription">{{ text }}</li> -->
     </div>
   </main>
