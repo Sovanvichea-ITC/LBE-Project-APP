@@ -80,7 +80,7 @@ export default {
       for (let i = 0; i < this.data.query?.search?.length; i++) {
         docChildren.push(
           new Paragraph({
-            text: this.textValue[i],
+            text: "Title: " + this.textValue[i],
             heading: HeadingLevel.HEADING_1,
             pageBreakBefore: true,
           })
@@ -91,6 +91,16 @@ export default {
             children: [
               new TextRun({
                 // text: this.txt,
+                text: "Link: " + this.urlLink[i],
+                style: "Hyperlink",
+                break: 1,
+                size: 25,
+                font: "Khmer OS Siemreap",
+              }),
+
+              new TextRun({
+                // text: this.txt,
+                break: 1,
                 text: this.textValueDescription[i],
                 size: 25,
                 font: "Khmer OS Siemreap",
