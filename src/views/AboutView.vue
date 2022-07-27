@@ -152,7 +152,7 @@ export default {
       let namefile, txt;
       let file = [];
 
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < this.data.query?.search?.length; i++) {
         namefile = this.textValue[i] + ".txt";
         txt = "Title:";
         txt = txt + this.textValue[i].concat("\nLink: " + this.urlLink[i]);
@@ -170,6 +170,12 @@ export default {
         });
       }
     },
+    exportExcel() {
+      this.$Notification.danger({
+        title: "Error notification",
+        text: "This function will update soon !!!",
+      });
+    },
   },
 };
 </script>
@@ -178,6 +184,7 @@ export default {
   <div>
     <div><h1>Welcome</h1></div>
     <div><button class="btn" v-on:click="exportDocx()">Download - Docx</button></div>
+    <div><button class="btn" v-on:click="exportExcel()">Download - Excel</button></div>
     <div><button class="btn" v-on:click="exportText()">Download - Texts</button></div>
   </div>
 
