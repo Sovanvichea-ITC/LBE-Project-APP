@@ -1,5 +1,6 @@
 <script>
 import FileSaver from "file-saver";
+
 import {
   Document,
   Packer,
@@ -43,6 +44,9 @@ export default {
       var msg;
       const res = await fetch(url);
       this.data = await res.json();
+
+      console.log("url: ", url);
+      console.log("data:=> ", this.data);
 
       const urlLink =
         "https://km.wikipedia.org/w/index.php?origin=*&action=opensearch&search=" +
@@ -139,14 +143,33 @@ export default {
       //Notification
       this.$Notification.success({
         title: "Success notification",
-        text: "Download completed",
+        text: "Download completed [ " + this.textValue[i] + ".txt ]",
       });
       this.txt = "";
     },
 
-    // createPargraps(title:[]){
-    //   console.log('tag', title.length)
-    // }
+    exportText() {
+      let namefile, txt;
+      let file = [];
+
+      for (let i = 0; i < 5; i++) {
+        namefile = this.textValue[i] + ".txt";
+        txt = "Title:";
+        txt = txt + this.textValue[i].concat("\nLink: " + this.urlLink[i]);
+        txt = txt.concat("\n", this.textDescription[i]);
+        txt = txt.concat("។​");
+
+        file[i] = new File([txt], namefile, {
+          type: "text/plain;charset=utf-8",
+        });
+        FileSaver.saveAs(file[i]);
+
+        this.$Notification.success({
+          title: "Success notification",
+          text: "Download completed [ " + this.textValue[i] + ".txt ]",
+        });
+      }
+    },
   },
 };
 </script>
@@ -154,7 +177,8 @@ export default {
 <template>
   <div>
     <div><h1>Welcome</h1></div>
-    <div><button class="btn" v-on:click="exportDocx()">Download</button></div>
+    <div><button class="btn" v-on:click="exportDocx()">Download - Docx</button></div>
+    <div><button class="btn" v-on:click="exportText()">Download - Texts</button></div>
   </div>
 
   <main>

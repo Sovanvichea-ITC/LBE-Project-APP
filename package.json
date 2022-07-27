@@ -11,8 +11,13 @@
     "equal-vue": "^0.79.3",
     "file-saver": "^2.0.5",
     "react": "^18.2.0",
+    "read-text-file": "^1.1.0",
+    "txt": "^1.0.0",
     "vue": "^3.2.37",
-    "vue-router": "^4.0.16"
+    "vue-router": "^4.0.16",
+    "write": "^2.0.0",
+    "write-to-file": "^1.0.2",
+    "writefile": "^0.2.8"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.3.3",
