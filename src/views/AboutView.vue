@@ -118,10 +118,10 @@ export default {
       //this.createPargraps(textValue);
 
       let docChildren = [];
-      for (let i = 0; i < this.data.query?.search?.length; i++) {
+      for (let i = 0; i < this.valuedata.length; i++) {
         docChildren.push(
           new Paragraph({
-            text: "Title: " + this.textValue[i],
+            text: "Title: " + this.valuedata[i].title,
             heading: HeadingLevel.HEADING_1,
             pageBreakBefore: true,
           })
@@ -132,7 +132,7 @@ export default {
             children: [
               new TextRun({
                 // text: this.txt,
-                text: "Link: " + this.urlLink[i],
+                text: "Link: " + this.valuedata[i].url,
                 style: "Hyperlink",
                 break: 1,
                 size: 25,
@@ -142,7 +142,7 @@ export default {
               new TextRun({
                 // text: this.txt,
                 break: 1,
-                text: this.textValueDescription[i],
+                text: this.valuedata[i].text,
                 size: 25,
                 font: "Khmer OS Siemreap",
               }),
