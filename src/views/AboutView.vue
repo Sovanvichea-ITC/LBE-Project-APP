@@ -26,10 +26,30 @@ export default {
       textDescription: [],
       txt: "",
       urlLink: [],
+      valuedata: [],
     };
+  },
+  watch: {
+    valueSearch_word(oldVal, newVal) {
+      if (oldVal == "") {
+        this.textDescription = [];
+      } else {
+        this.getData();
+      }
+    },
   },
   methods: {
     async getData() {
+      if (this.valueSearch_word == "") {
+        this.$Notification.danger({
+          title: "Error notification",
+          text: "Input you word!!!",
+        });
+
+        this.textDescription = [];
+
+        return 0;
+      }
       var url = "https://km.wikipedia.org/w/api.php";
 
       var params = {
@@ -117,7 +137,7 @@ export default {
         );
       }
 
-      console.log(...docChildren);
+      //console.log(...docChildren);
 
       const doc = new Document({
         sections: [
@@ -152,26 +172,16 @@ export default {
     },
 
     exportText() {
-      let namefile, txt;
-      let file = [];
+      if (this.valueSearch_word == "") {
+        this.$Notification.danger({
+          title: "Error notification",
+          text: "Input you word!!!",
+        });
 
+        return 0;
+      }
       for (let i = 0; i < this.data.query?.search?.length; i++) {
         this.searchTodownload(this.textValue[i]);
-        // namefile = this.textValue[i] + ".txt";
-        // txt = "Title:";
-        // txt = txt + this.textValue[i].concat("\nLink: " + this.urlLink[i]);
-        // txt = txt.concat("\n", this.textDescription[i]);
-        // txt = txt.concat("។​");
-
-        // file[i] = new File([txt], namefile, {
-        //   type: "text/plain;charset=utf-8",
-        // });
-        // FileSaver.saveAs(file[i]);
-
-        // this.$Notification.success({
-        //   title: "Success notification",
-        //   text: "Download completed [ " + this.textValue[i] + ".txt ]",
-        // });
       }
     },
     async searchTodownload(word) {
@@ -193,6 +203,12 @@ export default {
         console.log("Title: ", summary.title);
         console.log("Text: ", summary.extract);
         console.log("Text: ", summary.description_source);
+
+        this.valuedata.push({
+          url: summary.content_urls.desktop.page,
+          title: summary.title,
+          text: summary.extract,
+        });
 
         let namefile, txt;
         let file;
@@ -261,17 +277,21 @@ export default {
 
     <div>
       <h1><div id="title" ref="title_search"></div></h1>
-      <!-- <p :v-html=data.query.search[0].snippet>s</p> -->
-      <!-- <span v-html="p"></span> -->
     </div>
-    <!-- <div id="subtitle_1" ref="subtitle_search"></div> -->
+    <div class="txt" v-for="t in valuedata">
+      <h2 style="color: deeppink">{{ t.title }}</h2>
+      <div class="text">
+        <span href="#"> {{ t.text }}</span>
+      </div>
+      <div>
+        <a :href="t.url"><it-button type="warning">See More</it-button></a>
+      </div>
+    </div>
 
-    <div class="txt" v-for="(t, index) in textDescription">
-      <!-- <p :v-html=data.query.search[0].snippet>s</p> -->
-      <!-- <span dangerouslySetInnerHTML={{__html:d.snippet}}>s</span>
-      <div dangerouslySetInnerHTML="{{__html:d.snippet}}"></div>
-      <div dangerouslySetInnerHTML={{__html: data}}></div> -->
+    <!-- ///////////////////////////// -->
 
+    <!-- <div class="txt" v-for="(t, index) in textDescription">
+     
       <h2 style="color: deeppink">{{ data.query.search[index].title }}</h2>
       <div class="text">
         <span href="#"> {{ t }}</span>
@@ -279,8 +299,8 @@ export default {
       <div>
         <a :href="urlLink[index]"><it-button type="warning">See More</it-button></a>
       </div>
-      <!-- <li v-if="t == t" v-for="text in textValueDescription">{{ text }}</li> -->
-    </div>
+     
+    </div> -->
   </main>
 </template>
 <style>
