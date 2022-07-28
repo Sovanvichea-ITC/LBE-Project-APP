@@ -33,8 +33,11 @@ export default {
     valueSearch_word(oldVal, newVal) {
       if (oldVal == "") {
         this.textDescription = [];
+        this.valuedata = [];
       } else {
+        this.valuedata = [];
         this.getData();
+        this.valuedata = [];
       }
     },
   },
@@ -97,6 +100,8 @@ export default {
         this.urlLink[i] =
           "https://km.wikipedia.org/w/index.php?origin=*&action=opensearch&search=" +
           this.data.query.search[i].title;
+
+        this.searchTodownload(this.textValue[i], false);
       }
     },
     exportDocx() {
@@ -181,10 +186,10 @@ export default {
         return 0;
       }
       for (let i = 0; i < this.data.query?.search?.length; i++) {
-        this.searchTodownload(this.textValue[i]);
+        this.searchTodownload(this.textValue[i], true);
       }
     },
-    async searchTodownload(word) {
+    async searchTodownload(word, download) {
       try {
         //example
         //example
@@ -210,24 +215,27 @@ export default {
           text: summary.extract,
         });
 
-        let namefile, txt;
-        let file;
+        if (download) {
+          let namefile, txt;
+          let file;
 
-        namefile = summary.title + ".txt";
-        txt = "Title:";
-        txt = txt + summary.title.concat("\nLink: " + summary.content_urls.desktop.page);
-        txt = txt.concat("\n", summary.extract);
-        txt = txt.concat("។​");
+          namefile = summary.title + ".txt";
+          txt = "Title:";
+          txt =
+            txt + summary.title.concat("\nLink: " + summary.content_urls.desktop.page);
+          txt = txt.concat("\n", summary.extract);
+          txt = txt.concat("។​");
 
-        file = new File([txt], namefile, {
-          type: "text/plain;charset=utf-8",
-        });
-        FileSaver.saveAs(file);
+          file = new File([txt], namefile, {
+            type: "text/plain;charset=utf-8",
+          });
+          FileSaver.saveAs(file);
 
-        this.$Notification.success({
-          title: "Success notification",
-          text: "Download completed [ " + summary.title + ".txt ]",
-        });
+          this.$Notification.success({
+            title: "Success notification",
+            text: "Download completed [ " + summary.title + ".txt ]",
+          });
+        }
       } catch (error) {
         console.log(error);
         //=> Typeof summaryError, helpful in case you want to handle this error separately
@@ -264,7 +272,15 @@ export default {
       />
       <!-- Input <input type="text" ref="input" /> -->
       <it-button @click="getData()" type="success">Search</it-button>
+
       <!-- <input type="button" value="Search" @click="getData()" /> -->
+    </div>
+
+    <div
+      v-if="valuedata.length < 10 && valuedata.length >= 1"
+      style="margin: auto; width: 50%; padding: 10px"
+    >
+      <it-loading color="#f93155"></it-loading>
     </div>
     <!--<div v-for="d in data?.query?.search" key="d.ns">
       <h1><div id="title" ref="title_search"></div></h1>
@@ -278,6 +294,7 @@ export default {
     <div>
       <h1><div id="title" ref="title_search"></div></h1>
     </div>
+
     <div class="txt" v-for="t in valuedata">
       <h2 style="color: deeppink">{{ t.title }}</h2>
       <div class="text">
