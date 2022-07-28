@@ -15,7 +15,8 @@
     "txt": "^1.0.0",
     "vue": "^3.2.37",
     "vue-excel-xlsx": "^1.2.2",
-    "vue-router": "^4.0.16"
+    "vue-router": "^4.0.16",
+    "wikipedia": "^1.1.9"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.3.3",

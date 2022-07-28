@@ -1,5 +1,8 @@
 <script>
 import FileSaver from "file-saver";
+import wiki from "wikipedia";
+import { wikiSummary, summaryError } from "wikipedia";
+import { summary } from "wikipedia";
 
 import {
   Document,
@@ -153,21 +156,65 @@ export default {
       let file = [];
 
       for (let i = 0; i < this.data.query?.search?.length; i++) {
-        namefile = this.textValue[i] + ".txt";
+        this.searchTodownload(this.textValue[i]);
+        // namefile = this.textValue[i] + ".txt";
+        // txt = "Title:";
+        // txt = txt + this.textValue[i].concat("\nLink: " + this.urlLink[i]);
+        // txt = txt.concat("\n", this.textDescription[i]);
+        // txt = txt.concat("។​");
+
+        // file[i] = new File([txt], namefile, {
+        //   type: "text/plain;charset=utf-8",
+        // });
+        // FileSaver.saveAs(file[i]);
+
+        // this.$Notification.success({
+        //   title: "Success notification",
+        //   text: "Download completed [ " + this.textValue[i] + ".txt ]",
+        // });
+      }
+    },
+    async searchTodownload(word) {
+      try {
+        //example
+        //example
+        const changedLang = await wiki.setLang("km"); // sets language to french
+        // console.log("changedLang ", changedLang);
+        const page = await wiki.page(word, {
+          autoSuggest: true,
+          preload: true,
+          fields: ["summary", "html"],
+        });
+        console.log("Page: ", page);
+        const summary = await page.summary(); // Does not call API, returns summary immediately as it is preloaded
+
+        console.log("summary", summary);
+        console.log("url: ", summary.content_urls.desktop.page);
+        console.log("Title: ", summary.title);
+        console.log("Text: ", summary.extract);
+        console.log("Text: ", summary.description_source);
+
+        let namefile, txt;
+        let file;
+
+        namefile = summary.title + ".txt";
         txt = "Title:";
-        txt = txt + this.textValue[i].concat("\nLink: " + this.urlLink[i]);
-        txt = txt.concat("\n", this.textDescription[i]);
+        txt = txt + summary.title.concat("\nLink: " + summary.content_urls.desktop.page);
+        txt = txt.concat("\n", summary.extract);
         txt = txt.concat("។​");
 
-        file[i] = new File([txt], namefile, {
+        file = new File([txt], namefile, {
           type: "text/plain;charset=utf-8",
         });
-        FileSaver.saveAs(file[i]);
+        FileSaver.saveAs(file);
 
         this.$Notification.success({
           title: "Success notification",
-          text: "Download completed [ " + this.textValue[i] + ".txt ]",
+          text: "Download completed [ " + summary.title + ".txt ]",
         });
+      } catch (error) {
+        console.log(error);
+        //=> Typeof summaryError, helpful in case you want to handle this error separately
       }
     },
     exportExcel() {
