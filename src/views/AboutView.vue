@@ -126,7 +126,7 @@ export default {
             pageBreakBefore: true,
           })
         );
-        
+
         docChildren.push(
           new Paragraph({
             children: [
@@ -268,7 +268,9 @@ export default {
 </script>
 
 <template>
-  <div>
+  <!-- End Logo -->
+
+  <div class="todo">
     <div><h1>Welcome</h1></div>
     <div><button class="btn" v-on:click="exportDocx()">Download - Docx</button></div>
     <div><button class="btn" v-on:click="exportExcel()">Download - Excel</button></div>
@@ -348,5 +350,24 @@ export default {
   padding: 29px;
   margin-top: 20px;
   border-radius: 10px;
+}
+
+a {
+  padding-left: 40%;
+}
+.logo {
+  display: flex;
+  border: 2px;
+  background-color: rgb(255, 255, 255);
+}
+
+.logo-img {
+  padding-right: 40px;
+}
+.logo-img2 {
+  padding-left: 70px;
+}
+.todo {
+  margin-top: 40px;
 }
 </style>

@@ -1,24 +1,48 @@
 <script>
 export default {
   data() {
-    return{
-      
-    }
-  }
-}
+    return {};
+  },
+};
 </script>
 
 <template>
   <header>
-    <div class="wrapper">
-      <nav>
-        <!-- <RouterLink to="/">Home</RouterLink> -->
-        <!-- <RouterLink to="/about">About</RouterLink> -->
-      </nav>
-    </div>
-    <router-view></router-view>
+    <nav>
+      <!-- Logo -->
+      <div class="logo_text">
+        <div class="logo">
+          <div class="logo-img">
+            <a class="" href="http://itc.edu.kh" target="_blank">
+              <img
+                class=""
+                src="https://gic.itc.edu.kh/img/itc_logo.png"
+                alt="Logo"
+                style="height: 80px"
+              />
+            </a>
+          </div>
+          <div class="logo-img2">
+            <a class="" href="https://gic.itc.edu.kh">
+              <img
+                class=""
+                src="https://gic.itc.edu.kh/img/logo.png"
+                alt="Logo"
+                style="height: 70px; margin-top: 5px"
+              />
+            </a>
+          </div>
+        </div>
+        <div class="">Département de Génie Informatique et Communication</div>
+        <div class="">Department of Information and Communication Engineering</div>
+      </div>
+    </nav>
   </header>
-
+  <div class="wrapper">
+    <nav>
+      <router-view></router-view>
+    </nav>
+  </div>
 </template>
 
 <style>
