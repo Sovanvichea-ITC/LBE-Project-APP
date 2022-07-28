@@ -33,11 +33,11 @@ export default {
     valueSearch_word(oldVal, newVal) {
       if (oldVal == "") {
         this.textDescription = [];
-        this.valuedata = [];
+        // this.valuedata = [];
       } else {
-        this.valuedata = [];
-        this.getData();
-        this.valuedata = [];
+        //  this.valuedata = [];
+        //this.getData();
+        //  this.valuedata = [];
       }
     },
   },
@@ -209,11 +209,16 @@ export default {
         console.log("Text: ", summary.extract);
         console.log("Text: ", summary.description_source);
 
-        this.valuedata.push({
-          url: summary.content_urls.desktop.page,
-          title: summary.title,
-          text: summary.extract,
-        });
+        if (this.valuedata.length >= 10) {
+          this.valuedata = [];
+        } else if (summary.extract.length > 60) {
+          //alert(summary.extract.length);
+          this.valuedata.push({
+            url: summary.content_urls.desktop.page,
+            title: summary.title,
+            text: summary.extract,
+          });
+        }
 
         if (download) {
           let namefile, txt;
@@ -256,7 +261,11 @@ export default {
     <div><h1>Welcome</h1></div>
     <div><button class="btn" v-on:click="exportDocx()">Download - Docx</button></div>
     <div><button class="btn" v-on:click="exportExcel()">Download - Excel</button></div>
-    <div><button class="btn" v-on:click="exportText()">Download - Texts</button></div>
+    <div>
+      <button class="btn" v-on:click="exportText()">
+        Download - Texts x{{ this.valuedata.length }}
+      </button>
+    </div>
   </div>
 
   <main>
@@ -271,13 +280,31 @@ export default {
         v-model="valueSearch_word"
       />
       <!-- Input <input type="text" ref="input" /> -->
-      <it-button @click="getData()" type="success">Search</it-button>
+      <it-button @click="getData()" type="success" style="margin-left: 1px"
+        >Search</it-button
+      >
+
+      <it-button
+        @click="
+          $Message.danger({ text: 'Data cleared' }),
+            (valuedata = []),
+            (valueSearch_word = '')
+        "
+        type="danger"
+        style="margin-left: 30px"
+        >Clear Search</it-button
+      >
 
       <!-- <input type="button" value="Search" @click="getData()" /> -->
     </div>
 
     <div
-      v-if="valuedata.length < 10 && valuedata.length >= 1"
+      v-if="
+        valuedata.length < 10 &&
+        valuedata.length == '' &&
+        valueSearch_word != '' &&
+        this.textValue.length != 0
+      "
       style="margin: auto; width: 50%; padding: 10px"
     >
       <it-loading color="#f93155"></it-loading>
