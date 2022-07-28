@@ -27,6 +27,8 @@ export default {
       txt: "",
       urlLink: [],
       valuedata: [],
+      load: false,
+      num: "",
     };
   },
   watch: {
@@ -38,6 +40,11 @@ export default {
         //  this.valuedata = [];
         //this.getData();
         //  this.valuedata = [];
+      }
+    },
+    num(oldVal, newVal) {
+      if (oldVal.length == newVal.length) {
+        this.load = false;
       }
     },
   },
@@ -53,6 +60,8 @@ export default {
 
         return 0;
       }
+      this.valuedata = [];
+      this.load = true;
       var url = "https://km.wikipedia.org/w/api.php";
 
       var params = {
@@ -218,6 +227,8 @@ export default {
             title: summary.title,
             text: summary.extract,
           });
+
+          this.num = this.valuedata.length;
         }
 
         if (download) {
@@ -261,10 +272,10 @@ export default {
     <div><h1>Welcome</h1></div>
     <div><button class="btn" v-on:click="exportDocx()">Download - Docx</button></div>
     <div><button class="btn" v-on:click="exportExcel()">Download - Excel</button></div>
-    <div>
-      <button class="btn" v-on:click="exportText()">
-        Download - Texts x{{ this.valuedata.length }}
-      </button>
+    <div style="padding-top: 10px; padding-bottom: 10px">
+      <it-badge :value="valuedata.length" type="success" square>
+        <button class="btn" v-on:click="exportText()">Download - Texts</button>
+      </it-badge>
     </div>
   </div>
 
@@ -298,25 +309,9 @@ export default {
       <!-- <input type="button" value="Search" @click="getData()" /> -->
     </div>
 
-    <div
-      v-if="
-        valuedata.length < 10 &&
-        valuedata.length == '' &&
-        valueSearch_word != '' &&
-        this.textValue.length != 0
-      "
-      style="margin: auto; width: 50%; padding: 10px"
-    >
+    <div v-if="load == true" style="margin: auto; width: 50%; padding: 10px">
       <it-loading color="#f93155"></it-loading>
     </div>
-    <!--<div v-for="d in data?.query?.search" key="d.ns">
-      <h1><div id="title" ref="title_search"></div></h1>
-      <div id="subtitle" ref="subtitle_search"></div> 
-      <div>
-        <h1>{{ d.title }}</h1>
-      </div>
-      <div id="subtitle" ref="subtitle_search"></div>
-    </div>-->
 
     <div>
       <h1><div id="title" ref="title_search"></div></h1>
@@ -330,7 +325,6 @@ export default {
       <div>
         <a :href="t.url"><it-button type="warning">See More</it-button></a>
       </div>
-      
     </div>
 
     <!-- ///////////////////////////// -->
